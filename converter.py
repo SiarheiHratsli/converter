@@ -23,14 +23,14 @@ def parsowanie(input_file):
               f'rozszerzenie są obslugowane tym programem wpisz --help/-h')
 
 
-def zapisanie(output_file):
+def zapisanie(output_file, text):
     rozszerzenie = output_file.split('.')[-1].lower()
     if rozszerzenie == 'json':
-        return zapis_json(output_file)
+        return zapis_json(output_file, text)
     elif rozszerzenie == 'yaml' or rozszerzenie == 'yml':
-        return zapis_yaml(output_file)
+        return zapis_yaml(output_file, text)
     elif rozszerzenie == 'xml':
-        return zapis_xml(output_file)
+        return zapis_xml(output_file, text)
     else:
         print(f'Takie rozszerzenie {rozszerzenie} nie jest obslugowane tym programem')
         print(f'Aby dowiedziec sie co robi ten program i jakie rozszerzenie '
@@ -73,7 +73,12 @@ def pars_yaml(input_file):
 
 
 def zapis_yaml(output_file, text):
-    pass
+    try:
+        with open(output_file, 'w') as file:
+            file.write(benedict(text).to_yaml())
+        print(f'Zapisano plik {output_file}')
+    except IOError:
+        print(f'Nie udało się zapisać pliku {output_file}')
 
 
 def pars_xml(input_file):
@@ -92,5 +97,5 @@ def convert_to_text(data):
 
 
 wczytanyTekst = parsowanie(args.indir)
-# print(zapis_json(args.outdir, wczytanyTekst))
-print(wczytanyTekst)
+print(zapisanie(args.outdir, wczytanyTekst))
+# print(wczytanyTekst)
