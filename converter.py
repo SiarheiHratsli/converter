@@ -1,4 +1,5 @@
 import argparse
+import json
 
 parser = argparse.ArgumentParser(description='Jest to program ktory sluzy do konwersji plikow json/yaml/xml')
 parser.add_argument('indir', type=str, help='Input files')
@@ -9,11 +10,11 @@ args = parser.parse_args()
 def parsowanie(input_file):
     rozszerzenie = input_file.split('.')[-1].lower()
     if rozszerzenie == 'json':
-        pars_json(input_file)
+        return pars_json(input_file)
     elif rozszerzenie == 'yaml' or rozszerzenie == 'yml':
-        pars_yaml(input_file)
+        return pars_yaml(input_file)
     elif rozszerzenie == 'xml':
-        pars_xml(input_file)
+        return pars_xml(input_file)
     else:
         print(f'Takie rozszerzenie {rozszerzenie} nie jest obslugowane tym programem')
         print(f'Aby dowiedziec sie co robi ten program i jakie rozszerzenie są obslugowane '
@@ -21,7 +22,16 @@ def parsowanie(input_file):
 
 
 def pars_json(input_file):
-    print('jest to plik z rozszerzeniem json')
+    try:
+        with open(input_file, 'r') as file:
+            data = json.load(file)
+
+            text = convert_to_text(data)
+        return text
+    except FileNotFoundError:
+        print(f'Nie znaleziono pliku {input_file}')
+    except json.decoder.JSONDecodeError:
+        print(f'Plik {input_file} ma złą składnie')
 
 
 def pars_yaml(input_file):
@@ -31,4 +41,12 @@ def pars_yaml(input_file):
 def pars_xml(input_file):
     print('jest to plik z rozszerzeniem xml')
 
-print(parsowanie(args.indir))
+
+def convert_to_text(data):
+    text = ''
+    for key, value in data.items():
+        text += f'{key}: {value}\n'
+    return text
+
+wczytany_tekst = parsowanie(args.indir)
+print(wczytany_tekst)
