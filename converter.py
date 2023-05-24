@@ -1,6 +1,7 @@
 import argparse
 import json
 from benedict import benedict
+import yaml
 
 parser = argparse.ArgumentParser(description='Jest to program ktory sluzy do konwersji plikow json/yaml/xml')
 parser.add_argument('indir', type=str, help='Input files')
@@ -59,7 +60,16 @@ def zapis_json(output_file, text):
 
 
 def pars_yaml(input_file):
-    print('jest to plik z rozszerzeniem yaml')
+    try:
+        with open(input_file, 'r') as file:
+            data = yaml.safe_load(file)
+
+            # text = convertToText(data)
+        return data
+    except FileNotFoundError:
+        print(f'Nie znaleziono pliku {input_file}')
+    except yaml.YAMLError:
+        print(f'Plik {input_file} ma złą składnie')
 
 
 def zapis_yaml(output_file, text):
@@ -74,7 +84,7 @@ def zapis_xml(output_file, text):
     pass
 
 
-def convertToText(data):
+def convert_to_text(data):
     text = ''
     for key, value in data.items():
         text += f'{key}: {value}\n'
@@ -82,4 +92,5 @@ def convertToText(data):
 
 
 wczytanyTekst = parsowanie(args.indir)
-print(zapis_json(args.outdir, wczytanyTekst))
+# print(zapis_json(args.outdir, wczytanyTekst))
+print(wczytanyTekst)
