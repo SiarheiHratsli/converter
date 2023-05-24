@@ -2,6 +2,7 @@ import argparse
 import json
 from benedict import benedict
 import yaml
+import xml.etree.ElementTree as ET
 
 parser = argparse.ArgumentParser(description='Jest to program ktory sluzy do konwersji plikow json/yaml/xml')
 parser.add_argument('indir', type=str, help='Input files')
@@ -16,7 +17,7 @@ def parsowanie(input_file):
     elif rozszerzenie == 'yaml' or rozszerzenie == 'yml':
         return pars_yaml(input_file)
     elif rozszerzenie == 'xml':
-        return pars_xml(input_file)
+        return pars_yaml(input_file)
     else:
         print(f'Takie rozszerzenie {rozszerzenie} nie jest obslugowane tym programem')
         print(f'Aby dowiedziec sie co robi ten program i jakie '
@@ -82,7 +83,21 @@ def zapis_yaml(output_file, text):
 
 
 def pars_xml(input_file):
-    print('jest to plik z rozszerzeniem xml')
+    try:
+        text = {}
+        ET.parse(input_file)
+
+        tree = ET.parse(input_file)
+        root = tree.getroot()
+
+        for element in root.iter():
+            if element.tag != root.tag:
+                text[element.tag] = element.text
+        return text
+    except FileNotFoundError:
+        print(f'Nie znaleziono pliku {input_file}')
+    except ET.ParseError:
+        print(f'Plik {input_file} ma złą składnie')
 
 
 def zapis_xml(output_file, text):
@@ -97,5 +112,5 @@ def convert_to_text(data):
 
 
 wczytanyTekst = parsowanie(args.indir)
-print(zapisanie(args.outdir, wczytanyTekst))
-# print(wczytanyTekst)
+# print(zapisanie(args.outdir, wczytanyTekst))
+print(wczytanyTekst)
