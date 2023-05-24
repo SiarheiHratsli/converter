@@ -1,3 +1,4 @@
 pip3 install --upgrade pip
 pip3 install python-benedict
 pip3 install pyyaml
+pip3 install xmltodict
