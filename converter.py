@@ -5,6 +5,7 @@ import yaml
 import xml.etree.ElementTree as ET
 import xmltodict
 from tkinter import messagebox
+import threading
 
 
 # wyłołanie głównego okna
@@ -174,7 +175,7 @@ def konwertuj():
         return
 
     # sprawdzenie czy plik jest obsługiwany
-    elif rozszerzenie != 'json' and rozszerzenie != 'yaml' and rozszerzenie != 'yml' and rozszerzenie != 'xml':
+    elif rozszerzenie not in ['json', 'yaml', 'yml', 'xml']:
         open('error.txt', 'w').write(f'Such extension is not supported with this program')
         handle_error()
         return
@@ -198,7 +199,8 @@ def konwertuj():
     elif selected_format.get() == 3:
         output_file_konwert += '.xml'
     wczytany_tekst = parsowanie(input_file_konwert)
-    zapisanie(output_file_konwert, wczytany_tekst)
+    threading.Thread(target=zapisanie, args=(output_file_konwert, wczytany_tekst)).start()
+
 
 # button
 button_1 = Button(root, text='Select file', command=file_selection)
