@@ -23,9 +23,6 @@ def parsowanie(input_file_pars):
             return pars_yaml(input_file_pars)
         elif rozszerzenie == 'xml':
             return pars_xml(input_file_pars)
-        else:
-            open('error.txt', 'w').write(f'Such extension {rozszerzenie} is not supported with this program')
-            handle_error()
     except FileNotFoundError:
         open('error.txt', 'w').write(f'File not found {input_file_pars}')
         handle_error()
@@ -161,14 +158,14 @@ def file_selection():
 line_0 = Entry(root, width=40, state='readonly')
 line_0.place(x=120, y=11)
 
-json_var = IntVar()
-yaml_var = IntVar()
-xml_var = IntVar()
+selected_format = IntVar()
 
 
 def konwertuj():
     input_file_konwert = line_0.get()
     output_file_konwert = entry.get()
+
+    rozszerzenie = input_file_konwert.split('.')[-1].lower()
 
     # sprawdzenie pliku wejsciowego
     if input_file_konwert == '':
@@ -176,8 +173,14 @@ def konwertuj():
         handle_error()
         return
 
+    # sprawdzenie czy plik jest obsługiwany
+    elif rozszerzenie != 'json' and rozszerzenie != 'yaml' and rozszerzenie != 'yml' and rozszerzenie != 'xml':
+        open('error.txt', 'w').write(f'Such extension is not supported with this program')
+        handle_error()
+        return
+
     # sprawdzenie checkboksów
-    elif json_var.get() + yaml_var.get() + xml_var.get() == 0:
+    elif selected_format == 0:
         open('error.txt', 'w').write('Select conversion format')
         handle_error()
         return
@@ -188,15 +191,14 @@ def konwertuj():
         handle_error()
         return
 
-    elif json_var.get() == 1:
+    elif selected_format.get() == 1:
         output_file_konwert += '.json'
-    elif yaml_var.get() == 1:
+    elif selected_format.get() == 2:
         output_file_konwert += '.yaml'
-    elif xml_var.get() == 1:
+    elif selected_format.get() == 3:
         output_file_konwert += '.xml'
     wczytany_tekst = parsowanie(input_file_konwert)
     zapisanie(output_file_konwert, wczytany_tekst)
-
 
 # button
 button_1 = Button(root, text='Select file', command=file_selection)
@@ -206,13 +208,12 @@ button_2.place(x=200, y=110)
 
 
 # wybor pliku wyjsciowego
-checkbox1 = Checkbutton(root, text='json', variable=json_var)
-checkbox2 = Checkbutton(root, text='jaml', variable=yaml_var)
-checkbox3 = Checkbutton(root, text='xml', variable=xml_var)
-
-checkbox1.place(x=250, y=50)
-checkbox2.place(x=310, y=50)
-checkbox3.place(x=370, y=50)
+radio_1 = Radiobutton(root, text='json', variable=selected_format, value=1)
+radio_2 = Radiobutton(root, text='jaml', variable=selected_format, value=2)
+radio_3 = Radiobutton(root, text='xml', variable=selected_format, value=3)
+radio_1.place(x=250, y=50)
+radio_2.place(x=310, y=50)
+radio_3.place(x=370, y=50)
 
 # text
 text = Label(root, text='Select the format of the resulting file')
