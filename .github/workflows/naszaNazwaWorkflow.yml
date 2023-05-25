@@ -30,10 +30,11 @@ jobs:
       - name: Build executable
         shell: powershell
         run: |
-          pyinstaller --onefile converter.py
+          pyinstaller --onefile --noconsole converter.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: projekt
           path: dist/converter.exe
+
