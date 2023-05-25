@@ -1,3 +1,4 @@
+pyinstaller
 python-benedict
 pyyaml
 xmltodict
